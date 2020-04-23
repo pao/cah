@@ -4,6 +4,8 @@ import sys
 import yaml
 from autobahn.wamp import WampServerFactory, WampServerProtocol, exportRpc
 
+from twisted.python import log
+
 from game import Game
 from roomsmanager import rooms, get_smallest_game_id, create_new_game, get_or_create_room
 
@@ -22,6 +24,7 @@ class CahWampServerProtocol(WampServerProtocol):
         result = self._game.add_user(username, self)
         if result:
             self._username = username
+            self._game.sync_setup()
         return result
 
     @exportRpc
@@ -96,6 +99,15 @@ class CahWampServerProtocol(WampServerProtocol):
         if self._username:
             self.join(self._username)
         return game_id
+
+    @exportRpc
+    def set_active_cardset(self, state, tag):
+        if state:
+            self._game.cardset.active_tags.add(tag)
+        else:
+            self._game.cardset.active_tags.discard(tag)
+        log.msg("current active sets: {}".format(self._game.cardset.active_tags))
+        self._game.sync_setup()
 
     def onSessionOpen(self):
         self.registerProcedureForRpc("http://{server_domain}:{server_port}/ws/#join_game".format(**config),

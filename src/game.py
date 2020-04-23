@@ -8,7 +8,7 @@ import yaml
 from twisted.python import log
 
 from utils import roundrobin, frozendict
-from cardset import Cardset
+from cardset import DeckManager
 
 ABS_PATH = os.path.dirname(os.path.realpath(__file__))
 
@@ -20,8 +20,7 @@ class Game(object):
         self.game_id = game_id
         self._empty_game_callback = empty_game_callback
 
-        self.cardset = Cardset(os.path.join(ABS_PATH, "data"))
-        self.cardset.refresh_cards()
+        self.cardset = DeckManager(os.path.join(ABS_PATH, "data"))
 
         self._state = State()
 
@@ -95,7 +94,7 @@ class Game(object):
             self._state.round_timer.cancel()
         except:
             pass
-        self._state = State(self.cardset.black_cards, self.cardset.white_cards)
+        self._state = State(**(self.cardset.get_active_cards()))
         for user in self.users:
             user.reset()
         self._start_round()
@@ -168,6 +167,11 @@ class Game(object):
         self._publish("sync_me", {
             "game_running": False if self._state.step == "no_game" else True
         })
+
+    def sync_setup(self):
+        log.msg("Publishing setup")
+        self._publish("setup", {"all_cardsets": self.cardset.get_available_sets()})
+                      
 
     def update_afk(self, username, afk):
         self._get_user(username).afk = afk

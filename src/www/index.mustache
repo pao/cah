@@ -39,6 +39,12 @@
     </ul>
     </script>
 
+    <script id="t_cardsets" type="text/html">
+      {{#all_cardsets}}
+       <input type="checkbox" class="available-cardset" id="{{tag}}" {{#enabled}}checked{{/enabled}}>{{name}}</input>
+      {{/all_cardsets}}
+    </script>
+
     <script id="t_white_cards" type="text/html">
         {{#white_cards}}
             {{>t_white_card}}
@@ -149,6 +155,8 @@
 
     </div>
     <div class="left_pane">
+      <div class="pane_overlay">
+        </div>
         <div class="hand_container">
             <div class="hand container"><div class="push"></div></div>
             <div class="hand_overlay overlay"><span

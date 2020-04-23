@@ -3,6 +3,7 @@
 # http://creativecommons.org/licenses/by-nc-sa/2.0/
 name: Second Edition
 tag: "2ED"
+default: True
 black:
   - Why can't I sleep at night?
   - What's that smell?

@@ -147,6 +147,7 @@ cah.eventHandlers = (function () {
         start_round:function () {
             cah.max_whites = false;
             cah.czar = false;
+            $(".pane_overlay").hide();
             $(".hand_overlay").hide();
             $('.play_area_overlay').hide();
             $('.play_area .card').remove();
@@ -251,6 +252,15 @@ cah.eventHandlers = (function () {
                 notify(false, "New Message!");
             }
             append_to_chat(ich.t_chat_msg(data));
+        },
+        setup:function (topic, data) {
+            console.log("doing a setup thing");
+            $(".pane_overlay").html(ich.t_cardsets(data));
+            $(".available-cardset").on("click", function() {
+                // so emit just sort of does the wrong thing if the last argument has the value "false"
+                cah.emit("set_active_cardset", $(this).is(":checked"), $(this).attr("id"));
+            });        
+            $(".pane_overlay").show();
         }
     }
 })();
