@@ -11,6 +11,7 @@ setup(
         autobahn==0.5.9
         pystache==0.5.3
         zope.interface==4.4.2
+        requests==2.23.0
     """,
     
     include_package_data = True,

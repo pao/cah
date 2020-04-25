@@ -20,7 +20,8 @@ class Game(object):
         self.game_id = game_id
         self._empty_game_callback = empty_game_callback
 
-        self.cardset = DeckManager(os.path.join(ABS_PATH, "data"))
+        self.saved_decks_path = os.path.join(ABS_PATH, "data")
+        self.cardset = DeckManager(self.saved_decks_path)
 
         self._state = State()
 
