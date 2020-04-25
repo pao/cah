@@ -260,8 +260,9 @@ cah.eventHandlers = (function () {
                 cah.emit("set_active_cardset", $(this).attr("id"), $(this).is(":checked"));
             });
             $(".submit-cardcast").on("click", function() {
-                cah.emit("add_cardcast_set", $(".add-cardcast").val());
+                cah.emit("add_cardcast_set", $(".add-cardcast").val(), $(".make-cardcast-persistent").is(":checked"));
                 $(".add-cardcast").val("");
+                $(".make-cardcast-persistent").prop("checked", false);
             });
             $(".pane_overlay").show();
         }

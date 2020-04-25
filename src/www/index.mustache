@@ -41,9 +41,9 @@
 
     <script id="t_cardsets" type="text/html">
       {{#all_cardsets}}
-       <input type="checkbox" class="available-cardset" id="{{tag}}" {{#enabled}}checked{{/enabled}}>{{name}}</input>
+       <div><input type="checkbox" class="available-cardset" id="{{tag}}" {{#enabled}}checked{{/enabled}}>{{name}} ({{num_black}}B/{{num_white}}W)</input></div>
       {{/all_cardsets}}
-      <input placeholder="Cardcast Code" type="text" class="add-cardcast" maxlength="5" /><button class="submit-cardcast">Add Cardcast Deck</button>
+      <input placeholder="Cardcast Code" type="text" class="add-cardcast" maxlength="5" /><button class="submit-cardcast">Add Cardcast Deck</button><input type="checkbox" class="make-cardcast-persistent">Save Cardcast Deck?</input>
     </script>
 
     <script id="t_white_cards" type="text/html">

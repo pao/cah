@@ -114,8 +114,11 @@ class CahWampServerProtocol(WampServerProtocol):
         self._game.sync_setup()
 
     @exportRpc
-    def add_cardcast_set(self, playcode):
-        self._game.cardset.add_set(CardcastSet(playcode.upper()))
+    def add_cardcast_set(self, playcode, persistent):
+        new_set = CardcastSet(playcode.upper())
+        self._game.cardset.add_set(new_set)
+        if persistent:
+            new_set.save(self._game.saved_decks_path)
         self._game.sync_setup()
 
     def onSessionOpen(self):
