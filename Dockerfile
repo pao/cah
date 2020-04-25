@@ -1,4 +1,4 @@
-FROM python:2
+FROM python:2-slim
 
 COPY requirements.txt requirements.txt
 
