@@ -25,6 +25,10 @@ class Game(object):
 
         self._state = State()
 
+        self.winning_score = 6
+        self.round_length = 90
+        self.hand_size = 10
+
     _wamp_server = None
 
     @staticmethod
@@ -151,10 +155,11 @@ class Game(object):
             "message_parts": message
         })
 
-        if round_winner.score >= self._state.winning_score:
+        if round_winner.score >= self.winning_score:
             self._publish("winner", round_winner.username)
             self._set_step("no_game")
             self.sync_me()
+            self.sync_setup()
         else:
             self.sync_users()
             self._publish('show_timer', {
@@ -171,7 +176,12 @@ class Game(object):
 
     def sync_setup(self):
         log.msg("Publishing setup")
-        self._publish("setup", {"all_cardsets": self.cardset.get_available_sets()})
+        self._publish("setup", {
+            "all_cardsets": self.cardset.get_available_sets(),
+            "winning_score": self.winning_score,
+            "round_length": self.round_length,
+            "hand_size": self.hand_size,
+        })
                       
 
     def update_afk(self, username, afk):
@@ -180,13 +190,13 @@ class Game(object):
         self.sync_users()
 
     def restart_timer(self):
-        self._start_round_timer(self._state.round_length)
+        self._start_round_timer(self.round_length)
 
     def _start_round_timer(self, duration):
         self._cancel_round_timer()
         self._publish("show_timer", {
             "title": "Round ending in: ",
-            "duration": self._state.round_length
+            "duration": self.round_length
         })
         self._state.round_timer = Timer(duration,
             self._force_round_end, ())
@@ -249,13 +259,13 @@ class Game(object):
         for user in self.users:
             if not user.czar and not user.afk:
                 num_cards = len(user.hand)
-                cards = self._get_white_cards(10 + extra_cards - num_cards)
+                cards = self._get_white_cards(self.hand_size + extra_cards - num_cards)
                 if len(cards) > 0:
                     user.hand.extend(cards)
                     self._publish("send_hand",
                         {"white_cards": user.hand},
                         eligible=[user.session])
-        self._start_round_timer(self._state.round_length)
+        self._start_round_timer(self.round_length)
 
     def _set_next_czar(self):
         czar_idx = next((idx for (idx, u) in enumerate(self.users) if u.czar), -1)
@@ -320,7 +330,7 @@ class Game(object):
                 random.shuffle(cards)
                 self._publish("begin_judging", {"cards": cards})
                 self.sync_users()
-                self._start_round_timer(self._state.round_length)
+                self._start_round_timer(self.round_length)
 
     def _set_step(self, step):
         log.msg("Setting step to: {0}".format(step))
@@ -420,8 +430,5 @@ class State(object):
         if black_cards:
             self.available_black_cards = set(frozendict(card) for card in black_cards)
         log.msg("Black cards: {}, white cards: {}".format(len(self.available_black_cards), len(self.available_white_cards)))
-        self.winning_score = 6
-        self.round_length = 90
         self.black_card = None
         self.round_timer = None
-        self.extended_round_time = self.round_length

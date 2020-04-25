@@ -254,8 +254,7 @@ cah.eventHandlers = (function () {
             append_to_chat(ich.t_chat_msg(data));
         },
         setup:function (topic, data) {
-            console.log("doing a setup thing");
-            $(".pane_overlay").html(ich.t_cardsets(data));
+            $(".pane_overlay").html(ich.t_gameconfig(data));
             $(".available-cardset").on("click", function() {
                 cah.emit("set_active_cardset", $(this).attr("id"), $(this).is(":checked"));
             });
@@ -263,6 +262,15 @@ cah.eventHandlers = (function () {
                 cah.emit("add_cardcast_set", $(".add-cardcast").val(), $(".make-cardcast-persistent").is(":checked"));
                 $(".add-cardcast").val("");
                 $(".make-cardcast-persistent").prop("checked", false);
+            });
+            $(".winning-score").on("change", function() {
+                cah.emit("set_winning_score", $(".winning-score").val());
+            });
+            $(".round-length").on("change", function() {
+                cah.emit("set_round_length", $(".round-length").val());
+            });
+            $(".hand-size").on("change", function() {
+                cah.emit("set_hand_size", $(".hand-size").val());
             });
             $(".pane_overlay").show();
         }

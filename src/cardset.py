@@ -130,6 +130,7 @@ class DeckManager(object):
                     "enabled": tag in self.active_tags,
                     "num_black": len(this_set["black"]),
                     "num_white": len(this_set["white"]),
+                    "is_cardcast": this_set["cardcast_id"] is not None,
                 }
             )
         return available_sets

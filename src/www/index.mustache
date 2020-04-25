@@ -39,11 +39,14 @@
     </ul>
     </script>
 
-    <script id="t_cardsets" type="text/html">
+    <script id="t_gameconfig" type="text/html">
       {{#all_cardsets}}
-       <div><input type="checkbox" class="available-cardset" id="{{tag}}" {{#enabled}}checked{{/enabled}}>{{name}} ({{num_black}}B/{{num_white}}W)</input></div>
+       <div class="cardset-settings"><input type="checkbox" class="available-cardset" id="{{tag}}" {{#enabled}}checked{{/enabled}}>{{name}} ({{num_black}}B/{{num_white}}W)</input> {{#is_cardcast}} addl cardcast opts here{{/is_cardcast}}</div>
       {{/all_cardsets}}
-      <input placeholder="Cardcast Code" type="text" class="add-cardcast" maxlength="5" /><button class="submit-cardcast">Add Cardcast Deck</button><input type="checkbox" class="make-cardcast-persistent">Save Cardcast Deck?</input>
+      <div class="cardcast"><input placeholder="Cardcast Code" type="text" class="add-cardcast" maxlength="5" /><button class="submit-cardcast">Add Cardcast Deck</button><input type="checkbox" class="make-cardcast-persistent">Save Cardcast Deck?</input></div>
+      <div class="setup-rule"><input type="number" min="1" class="winning-score" value="{{winning_score}}" />Winning Score</div>
+      <div class="setup-rule"><input type="number" min="30" max="300" class="round-length" value="{{round_length}}" />Time per Round (seconds)</div>
+      <div class="setup-rule"><input type="number" min="5" max="10" class="hand-size" value="{{hand_size}}" />Hand Size</div>
     </script>
 
     <script id="t_white_cards" type="text/html">
