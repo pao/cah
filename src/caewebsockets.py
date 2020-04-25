@@ -105,7 +105,7 @@ class CahWampServerProtocol(WampServerProtocol):
         return game_id
 
     @exportRpc
-    def set_active_cardset(self, state, tag):
+    def set_active_cardset(self, tag, state):
         if state:
             self._game.cardset.active_tags.add(tag)
         else:

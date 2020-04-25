@@ -22,7 +22,7 @@ cah.start = function () {
         }
     };
 
-    cah.emit = function (topic, arg1, arg2) {
+    cah.emit = function (topic, ...args) {
         topic = [wamp_prefix, cah.game_id, "_rpc#", topic].join('');
         if (cah.debug) {
             console.log("Emit: " + topic);
@@ -30,12 +30,7 @@ cah.start = function () {
                 console.log(arg);
             });
         }
-        if (arg2)
-            return sess.call(topic, arg1, arg2);
-        else if (arg1)
-            return sess.call(topic, arg1);
-        else
-            return sess.call(topic);
+        return sess.call(topic, ...args);
     };
 
     cah.publish = function (topic, data) {
