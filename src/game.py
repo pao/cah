@@ -102,6 +102,7 @@ class Game(object):
         self._state = State(**(self.cardset.get_active_cards()))
         for user in self.users:
             user.reset()
+        random.choice(self.users).czar = True
         self._start_round()
 
     def choose_white(self, username, card_id):
