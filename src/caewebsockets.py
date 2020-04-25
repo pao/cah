@@ -1,12 +1,16 @@
 import os
 import sys
 
+import json
 import yaml
 from autobahn.wamp import WampServerFactory, WampServerProtocol, exportRpc
 
 from twisted.python import log
 
+import requests
+
 from game import Game
+from cardset import CardcastSet
 from roomsmanager import rooms, get_smallest_game_id, create_new_game, get_or_create_room
 
 with open("config.yml") as f:
@@ -107,6 +111,11 @@ class CahWampServerProtocol(WampServerProtocol):
         else:
             self._game.cardset.active_tags.discard(tag)
         log.msg("current active sets: {}".format(self._game.cardset.active_tags))
+        self._game.sync_setup()
+
+    @exportRpc
+    def add_cardcast_set(self, playcode):
+        self._game.cardset.add_set(CardcastSet(playcode.upper()))
         self._game.sync_setup()
 
     def onSessionOpen(self):

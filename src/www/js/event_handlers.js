@@ -259,7 +259,11 @@ cah.eventHandlers = (function () {
             $(".available-cardset").on("click", function() {
                 // so emit just sort of does the wrong thing if the last argument has the value "false"
                 cah.emit("set_active_cardset", $(this).is(":checked"), $(this).attr("id"));
-            });        
+            });
+            $(".submit-cardcast").on("click", function() {
+                cah.emit("add_cardcast_set", $(".add-cardcast").val());
+                $(".add-cardcast").val("");
+            });
             $(".pane_overlay").show();
         }
     }
