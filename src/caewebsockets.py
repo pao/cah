@@ -121,6 +121,26 @@ class CahWampServerProtocol(WampServerProtocol):
             new_set.save(self._game.saved_decks_path)
         self._game.sync_setup()
 
+    @exportRpc
+    def set_winning_score(self, winning_score):
+        self._game.winning_score = int(winning_score)
+        self._game.sync_setup()
+
+    @exportRpc
+    def set_round_length(self, round_length):
+        self._game.round_length = int(round_length)
+        self._game.sync_setup()
+
+    @exportRpc
+    def set_timer_disabled(self, timer_disabled):
+        self._game.timer_disabled = timer_disabled
+        self._game.sync_setup()
+
+    @exportRpc
+    def set_hand_size(self, hand_size):
+        self._game.hand_size = int(hand_size)
+        self._game.sync_setup()
+
     def onSessionOpen(self):
         self.registerProcedureForRpc("http://{server_domain}:{server_port}/ws/#join_game".format(**config),
             self.join_game)
