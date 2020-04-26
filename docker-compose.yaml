@@ -1,0 +1,22 @@
+version: "3.8"
+
+services:
+  cah:
+    build: .
+    networks:
+      - frontend
+    ports:
+      - "${CAH_PORT}:${CAH_PORT}"
+    volumes:
+      - card-data:/data
+    environment:
+      - CAH_PORT
+      - CAH_DOMAIN
+      - CAH_ADMIN_PASSWORD
+      - CAH_CARD_DATA_PATH=/data
+
+networks:
+  frontend:
+
+volumes:
+  card-data:
