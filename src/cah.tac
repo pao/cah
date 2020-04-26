@@ -37,10 +37,12 @@ with open(os.path.join(WEBROOT_DIR, "js", "init.mustache")) as f:
 fileResource.putChild('js', jsResource)
 
 # Serve up websockets
-serverURI = "ws://{websocket_domain}:{websocket_port}".format(websocket_domain=config.websocket_domain, websocket_port=config.websocket_port)
+ws_protocol = "wss" if config.secure_protocol else "ws"
+http_protocol = "https" if config.secure_protocol else "http"
+serverURI = "{protocol}://{websocket_domain}:{websocket_port}".format(protocol=ws_protocol, websocket_domain=config.websocket_domain, websocket_port=config.websocket_port)
 cahWampFactory = CahServerFactory(
     serverURI,
-    "{server_domain}:{server_port}".format(server_domain=config.server_domain, server_port=config.server_port),
+    "{protocol}://{server_domain}:{server_port}".format(protocol=http_protocol, server_domain=config.server_domain, server_port=config.server_port),
     debug=False,
     debugWamp=True,
     debugCodePaths=False,

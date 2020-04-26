@@ -11,7 +11,7 @@ from utils import roundrobin, frozendict
 from configuration import Configuration
 from cardset import DeckManager
 
-publish = "http://{}/ws/{}#{}"
+publish = "{}/ws/{}#{}"
 
 config = Configuration()
 

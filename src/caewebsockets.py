@@ -85,14 +85,16 @@ class CahWampServerProtocol(WampServerProtocol):
         elif self._game:
             self._game.remove_user(self._username)
         self._game_id = game_id
-        prefix = 'http://{}:{}/ws/{}{}#'
+        prefix = '{}://{}:{}/ws/{}{}#'
         self.registerForRpc(self, prefix.format(
+            "https" if config['secure_protocol'] else "http",
             config['server_domain'],
             config['server_port'],
             game_id,
             '_rpc',
         ))
         self.registerForPubSub(prefix.format(
+            "https" if config['secure_protocol'] else "http",
             config['server_domain'],
             config['server_port'],
             game_id,
@@ -141,7 +143,9 @@ class CahWampServerProtocol(WampServerProtocol):
         self._game.sync_setup()
 
     def onSessionOpen(self):
-        self.registerProcedureForRpc("http://{server_domain}:{server_port}/ws/#join_game".format(server_domain=config.server_domain, server_port=config.server_port),
+        http_protocol = "https" if config.secure_protocol else "http"
+        register_uri = "{protocol}://{server_domain}:{server_port}/ws/#join_game".format(protocol=http_protocol, server_domain=config.server_domain, server_port=config.server_port)
+        self.registerProcedureForRpc(register_uri,
             self.join_game)
 
     def connectionLost(self, reason):
