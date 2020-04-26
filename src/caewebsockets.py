@@ -114,11 +114,22 @@ class CahWampServerProtocol(WampServerProtocol):
         self._game.sync_setup()
 
     @exportRpc
-    def add_cardcast_set(self, playcode, persistent):
+    def add_cardcast_set(self, playcode):
         new_set = Cardset.from_cardcast(playcode)
         self._game.cardset.add_set(new_set)
-        if persistent:
-            new_set.save(self._game.saved_decks_path)
+        new_set.save(self._game.saved_decks_path)
+        self._game.sync_setup()
+
+    @exportRpc
+    def set_default_cardset(self, tag, state):
+        self._game.cardset.all_sets[tag].default = state
+        self._game.cardset.all_sets[tag].save(self._game.saved_decks_path)
+        self._game.sync_setup()
+
+    @exportRpc
+    def delete_cardset(self, tag):
+        log.msg("Deleting set {}".format(tag))
+        self._game.cardset.remove_set(tag, self._game.saved_decks_path)
         self._game.sync_setup()
 
     @exportRpc

@@ -90,15 +90,25 @@ class Cardset(object):
             output.append("".join([card["text"][0].capitalize(), "."]))
         return output
 
-    def save(self, save_path):
-        filename = os.path.join(
+    def get_filename(self, save_path):
+        return os.path.join(
             save_path,
             "{}{}.yml".format("cardcast-" if self.cardcast_id else "", self.tag),
         )
+
+    def save(self, save_path):
         yaml = YAML()
         yaml.default_flow_style = False
-        with open(filename, "w") as f:
+        with open(self.get_filename(save_path), "w") as f:
             yaml.dump(self.as_dict(), f)
+
+    def delete(self, save_path):
+        log.msg("Deleting file {}".format(self.get_filename(save_path)))
+        os.unlink(self.get_filename(save_path))
+        # try:
+        #    os.unlink(self.get_filename())
+        # except:
+        #    pass
 
 
 class DeckManager(object):
@@ -117,10 +127,9 @@ class DeckManager(object):
         for filename in available_files:
             self.add_set(Cardset.from_local_file(filename))
 
-    def remove_set(self, tag, delete_file=False):
-        if delete_file:
-            pass
-        del self.all_sets["tag"]
+    def remove_set(self, tag, save_path):
+        self.all_sets[tag].delete(save_path)
+        del self.all_sets[tag]
 
     def get_available_sets(self):
         available_sets = []
@@ -133,6 +142,7 @@ class DeckManager(object):
                     "num_black": len(this_set["black"]),
                     "num_white": len(this_set["white"]),
                     "is_cardcast": this_set["cardcast_id"] is not None,
+                    "default": this_set["default"],
                 }
             )
         return available_sets

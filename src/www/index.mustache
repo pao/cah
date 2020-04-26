@@ -41,9 +41,19 @@
 
     <script id="t_gameconfig" type="text/html">
       {{#all_cardsets}}
-       <div class="cardset-settings"><input type="checkbox" class="available-cardset" id="{{tag}}" {{#enabled}}checked{{/enabled}}>{{name}} ({{num_black}}B/{{num_white}}W)</input> {{#is_cardcast}} addl cardcast opts here{{/is_cardcast}}</div>
+        <div class="cardset-settings" id="{{tag}}">
+          <input type="checkbox" class="available-cardset" {{#enabled}}checked{{/enabled}}>{{name}} ({{num_black}}B/{{num_white}}W)</input>
+          <input type="checkbox" class="default-cardset" {{#default}}checked{{/default}}>Default</input>
+          {{#is_cardcast}}
+            <button class="refresh-cardset">Refresh</button>
+            <button class="delete-cardset">Delete</button>
+          {{/is_cardcast}}
+        </div>
       {{/all_cardsets}}
-      <div class="cardcast"><input placeholder="Cardcast Code" type="text" class="add-cardcast" maxlength="5" /><button class="submit-cardcast">Add Cardcast Deck</button><input type="checkbox" class="make-cardcast-persistent">Save Cardcast Deck?</input></div>
+      <div class="cardcast">
+        <input placeholder="Cardcast Code" type="text" class="add-cardcast" maxlength="5" />
+        <button class="submit-cardcast">Add Cardcast Deck</button>
+      </div>
       <div class="setup-rule"><input type="number" min="1" class="winning-score" value="{{winning_score}}" />Winning Score</div>
       <div class="setup-rule"><input type="number" min="30" max="300" class="round-length" value="{{round_length}}" />Time per Round (seconds)<input type="checkbox" class="disable-timer" {{#timer_disabled}}checked{{/timer_disabled}}>Disable Timer</input></div>
       <div class="setup-rule"><input type="number" min="5" max="10" class="hand-size" value="{{hand_size}}" />Hand Size</div>
