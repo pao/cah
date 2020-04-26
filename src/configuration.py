@@ -25,6 +25,7 @@ class Configuration(object):
         self.card_data_path = os.getenv(
             "CAH_CARD_DATA_PATH", os.path.join(ABS_PATH, "data")
         )
+        self.secure_protocol = bool(os.getenv("CAH_SECURE_PROTOCOL", False))
 
     def __getitem__(self, *args, **kwargs):
         return self.__dict__.__getitem__(*args, **kwargs)

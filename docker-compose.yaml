@@ -13,6 +13,7 @@ services:
       - CAH_PORT
       - CAH_DOMAIN
       - CAH_ADMIN_PASSWORD
+      - CAH_SECURE_PROTOCOL
       - CAH_CARD_DATA_PATH=/data
 
 networks:
