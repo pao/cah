@@ -1,4 +1,6 @@
+import glob
 import os
+import shutil
 
 import yaml
 
@@ -10,9 +12,16 @@ import pystache
 from configuration import Configuration
 from caewebsockets import CahServerFactory
 
-WEBROOT_DIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), "www")
+ABS_PATH = os.path.dirname(os.path.realpath(__file__))
+
+WEBROOT_DIR = os.path.join(ABS_PATH, "www")
 
 config = Configuration()
+
+## If there are no card packs, copy the standard decks over
+if not glob.glob(os.path.join(config.card_data_path, "*.yml")):
+    for filename in glob.glob(os.path.join(ABS_PATH, "default-data", "*.yml")):
+        shutil.copy(filename, config.card_data_path)
 
 ## Set up the web server
 fileResource = static.File(os.path.join(WEBROOT_DIR))
