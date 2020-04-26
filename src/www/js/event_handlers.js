@@ -269,6 +269,9 @@ cah.eventHandlers = (function () {
             $(".round-length").on("change", function() {
                 cah.emit("set_round_length", $(".round-length").val());
             });
+            $(".disable-timer").on("click", function() {
+                cah.emit("set_timer_disabled", $(".disable-timer").is(":checked"));
+            });
             $(".hand-size").on("change", function() {
                 cah.emit("set_hand_size", $(".hand-size").val());
             });

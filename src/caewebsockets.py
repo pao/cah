@@ -132,6 +132,11 @@ class CahWampServerProtocol(WampServerProtocol):
         self._game.sync_setup()
 
     @exportRpc
+    def set_timer_disabled(self, timer_disabled):
+        self._game.timer_disabled = timer_disabled
+        self._game.sync_setup()
+
+    @exportRpc
     def set_hand_size(self, hand_size):
         self._game.hand_size = int(hand_size)
         self._game.sync_setup()

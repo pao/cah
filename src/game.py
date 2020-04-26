@@ -20,14 +20,16 @@ class Game(object):
         self.game_id = game_id
         self._empty_game_callback = empty_game_callback
 
+        self.winning_score = 6
+        self.round_length = 90
+        self.timer_disabled = False
+        self.hand_size = 10
+
         self.saved_decks_path = os.path.join(ABS_PATH, "data")
         self.cardset = DeckManager(self.saved_decks_path)
 
         self._state = State()
 
-        self.winning_score = 6
-        self.round_length = 90
-        self.hand_size = 10
 
     _wamp_server = None
 
@@ -181,6 +183,7 @@ class Game(object):
             "all_cardsets": self.cardset.get_available_sets(),
             "winning_score": self.winning_score,
             "round_length": self.round_length,
+            "timer_disabled": self.timer_disabled,
             "hand_size": self.hand_size,
         })
                       
@@ -194,6 +197,8 @@ class Game(object):
         self._start_round_timer(self.round_length)
 
     def _start_round_timer(self, duration):
+        if self.timer_disabled:
+            return
         self._cancel_round_timer()
         self._publish("show_timer", {
             "title": "Round ending in: ",
