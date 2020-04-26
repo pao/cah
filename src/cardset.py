@@ -21,7 +21,14 @@ def enumerate_cards(cards):
 
 class Cardset(object):
     def __init__(
-        self, black=[], white=[], name="", tag="", default=False, cardcast_id=None
+        self,
+        black=[],
+        white=[],
+        name="",
+        tag="",
+        default=False,
+        cardcast_id=None,
+        hidden=False,
     ):
         self.name = name
         self.tag = tag
@@ -29,6 +36,7 @@ class Cardset(object):
         self.cardcast_id = cardcast_id
         self.white = white
         self.black = black
+        self.hidden = hidden
 
     def __getitem__(self, *args, **kwargs):
         return self.__dict__.__getitem__(*args, **kwargs)
@@ -41,6 +49,7 @@ class Cardset(object):
             "cardcast_id": self.cardcast_id,
             "white": self.white,
             "black": self.black,
+            "hidden": self.hidden,
         }
 
     @classmethod
@@ -116,7 +125,9 @@ class DeckManager(object):
         self.active_files = []
         self.all_sets = {}
         self.refresh_files(data_path)
-        self.active_tags = set(tag for tag, c in self.all_sets.items() if c["default"])
+        self.active_tags = set(
+            tag for tag, c in self.all_sets.items() if c["default"] and not c["hidden"]
+        )
         log.msg("initially active: ", self.active_tags)
 
     def add_set(self, cardset):
@@ -143,6 +154,7 @@ class DeckManager(object):
                     "num_white": len(this_set["white"]),
                     "is_cardcast": this_set["cardcast_id"] is not None,
                     "default": this_set["default"],
+                    "hidden": this_set["hidden"],
                 }
             )
         return available_sets

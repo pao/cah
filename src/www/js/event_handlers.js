@@ -279,6 +279,13 @@ cah.eventHandlers = (function () {
                 cah.emit("add_cardcast_set", $(".add-cardcast").val());
                 $(".add-cardcast").val("");
             });
+            $(".hide-cardset").on("click", function() {
+                cah.emit("hide_cardset", $(this).parent().attr("id"), true);
+            });
+            $(".unhide-cardset").on("click", function() {
+                cah.emit("hide_cardset", $(".set-to-unhide").val(), false);
+                $(".set-to-unhide").val("");
+            });
             $(".winning-score").on("change", function() {
                 cah.emit("set_winning_score", $(".winning-score").val());
             });

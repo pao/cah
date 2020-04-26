@@ -133,6 +133,13 @@ class CahWampServerProtocol(WampServerProtocol):
         self._game.sync_setup()
 
     @exportRpc
+    def hide_cardset(self, tag, state):
+        self._game.cardset.active_tags.discard(tag)
+        self._game.cardset.all_sets[tag].hidden = state
+        self._game.cardset.all_sets[tag].save(self._game.saved_decks_path)
+        self._game.sync_setup()
+
+    @exportRpc
     def set_winning_score(self, winning_score):
         self._game.winning_score = int(winning_score)
         self._game.sync_setup()

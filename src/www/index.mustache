@@ -40,7 +40,8 @@
     </script>
 
     <script id="t_gameconfig" type="text/html">
-      {{#all_cardsets}}
+    {{#all_cardsets}}
+      {{^hidden}}
         <div class="cardset-settings" id="{{tag}}">
           <input type="checkbox" class="available-cardset" {{#enabled}}checked{{/enabled}}>{{name}} ({{num_black}}B/{{num_white}}W)</input>
           <input type="checkbox" class="default-cardset" {{#default}}checked{{/default}}>Default</input>
@@ -48,11 +49,19 @@
             <button class="refresh-cardset">Refresh</button>
             <button class="delete-cardset">Delete</button>
           {{/is_cardcast}}
+          {{^is_cardcast}}
+            <button class="hide-cardset">Hide</button>
+          {{/is_cardcast}}
         </div>
+        {{/hidden}}
       {{/all_cardsets}}
       <div class="cardcast">
         <input placeholder="Cardcast Code" type="text" class="add-cardcast" maxlength="5" />
         <button class="submit-cardcast">Add Cardcast Deck</button>
+      </div>
+      <div class="unhide">
+        <input placeholder="BerryCAH Tag" type="text", class="set-to-unhide" />
+        <button class="unhide-cardset">Unhide Set</button>
       </div>
       <div class="setup-rule"><input type="number" min="1" class="winning-score" value="{{winning_score}}" />Winning Score</div>
       <div class="setup-rule"><input type="number" min="30" max="300" class="round-length" value="{{round_length}}" />Time per Round (seconds)<input type="checkbox" class="disable-timer" {{#timer_disabled}}checked{{/timer_disabled}}>Disable Timer</input></div>
