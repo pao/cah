@@ -8,11 +8,12 @@ import yaml
 from twisted.python import log
 
 from utils import roundrobin, frozendict
+from configuration import Configuration
 from cardset import DeckManager
 
-ABS_PATH = os.path.dirname(os.path.realpath(__file__))
-
 publish = "http://{}/ws/{}#{}"
+
+config = Configuration()
 
 class Game(object):
     def __init__(self, game_id, empty_game_callback):
@@ -25,7 +26,7 @@ class Game(object):
         self.timer_disabled = False
         self.hand_size = 10
 
-        self.saved_decks_path = os.path.join(ABS_PATH, "data")
+        self.saved_decks_path = config.card_data_path
         self.cardset = DeckManager(self.saved_decks_path)
 
         self._state = State()

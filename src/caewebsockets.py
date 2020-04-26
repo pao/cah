@@ -11,11 +11,10 @@ import requests
 
 from game import Game
 from cardset import CardcastSet
+from configuration import Configuration
 from roomsmanager import rooms, get_smallest_game_id, create_new_game, get_or_create_room
 
-with open("config.yml") as f:
-    config = yaml.load(f)
-    config['admin_password'] = os.getenv('CAH_ADMIN_PASS', config['admin_password'])
+config = Configuration()
 
 class CahWampServerProtocol(WampServerProtocol):
     def __init__(self):
@@ -142,7 +141,7 @@ class CahWampServerProtocol(WampServerProtocol):
         self._game.sync_setup()
 
     def onSessionOpen(self):
-        self.registerProcedureForRpc("http://{server_domain}:{server_port}/ws/#join_game".format(**config),
+        self.registerProcedureForRpc("http://{server_domain}:{server_port}/ws/#join_game".format(server_domain=config.server_domain, server_port=config.server_port),
             self.join_game)
 
     def connectionLost(self, reason):
