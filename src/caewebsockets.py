@@ -2,7 +2,6 @@ import os
 import sys
 
 import json
-import yaml
 from autobahn.wamp import WampServerFactory, WampServerProtocol, exportRpc
 
 from twisted.python import log
@@ -10,7 +9,7 @@ from twisted.python import log
 import requests
 
 from game import Game
-from cardset import CardcastSet
+from cardset import Cardset
 from configuration import Configuration
 from roomsmanager import rooms, get_smallest_game_id, create_new_game, get_or_create_room
 
@@ -116,7 +115,7 @@ class CahWampServerProtocol(WampServerProtocol):
 
     @exportRpc
     def add_cardcast_set(self, playcode, persistent):
-        new_set = CardcastSet(playcode.upper())
+        new_set = Cardset.from_cardcast(playcode)
         self._game.cardset.add_set(new_set)
         if persistent:
             new_set.save(self._game.saved_decks_path)

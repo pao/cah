@@ -3,7 +3,7 @@ from __future__ import print_function
 import glob
 import json
 import os
-import yaml
+from ruamel.yaml import YAML
 
 import requests
 
@@ -43,23 +43,23 @@ class Cardset(object):
             "black": self.black,
         }
 
-
-class LocalFileSet(Cardset):
-    def __init__(self, filename):
+    @classmethod
+    def from_local_file(cls, filename):
         log.msg("Loading {}".format(filename))
+        yaml = YAML(typ="rt")
         with open(filename) as f:
             cardset = yaml.load(f)
         log.msg("{} loaded".format(filename))
         # skip file if empty
         if cardset:
-            Cardset.__init__(self, **cardset)
+            return cls(**cardset)
         else:
             log.msg("{} had no content...".format(filename))
-            Cardset.__init__(self)
+            return cls()
 
-
-class CardcastSet(Cardset):
-    def __init__(self, playcode):
+    @classmethod
+    def from_cardcast(cls, playcode):
+        playcode = playcode.upper()
         log.msg("getting deck {} from Cardcast".format(playcode))
         deck_uri = "https://api.cardcastgame.com/v1/decks/{}".format(playcode)
         deck_info = json.loads(requests.get(deck_uri).text)
@@ -68,26 +68,13 @@ class CardcastSet(Cardset):
             "loaded {} from Cardcast: name '{}'".format(playcode, deck_info["name"])
         )
 
-        Cardset.__init__(
-            self,
-            black=CardcastSet.reformat_black(cards["calls"]),
-            white=CardcastSet.reformat_white(cards["responses"]),
+        return cls(
+            black=cls.reformat_black(cards["calls"]),
+            white=cls.reformat_white(cards["responses"]),
             name="{} ({})".format(deck_info["name"], playcode),
             tag=playcode,
             cardcast_id=playcode,
         )
-
-    def save(self, save_path):
-        filename = os.path.join(save_path, "cardcast-{}.yml".format(self.tag))
-        with open(filename, "w") as f:
-            f.write(
-                yaml.safe_dump(
-                    self.as_dict(),
-                    encoding="utf-8",
-                    allow_unicode=True,
-                    default_flow_style=False,
-                )
-            )
 
     @staticmethod
     def reformat_black(cards):
@@ -102,6 +89,16 @@ class CardcastSet(Cardset):
         for card in cards:
             output.append("".join([card["text"][0].capitalize(), "."]))
         return output
+
+    def save(self, save_path):
+        filename = os.path.join(
+            save_path,
+            "{}{}.yml".format("cardcast-" if self.cardcast_id else "", self.tag),
+        )
+        yaml = YAML()
+        yaml.default_flow_style = False
+        with open(filename, "w") as f:
+            yaml.dump(self.as_dict(), f)
 
 
 class DeckManager(object):
@@ -118,7 +115,12 @@ class DeckManager(object):
     def refresh_files(self, data_path):
         available_files = glob.glob(os.path.join(data_path, "*.yml"))
         for filename in available_files:
-            self.add_set(LocalFileSet(filename))
+            self.add_set(Cardset.from_local_file(filename))
+
+    def remove_set(self, tag, delete_file=False):
+        if delete_file:
+            pass
+        del self.all_sets["tag"]
 
     def get_available_sets(self):
         available_sets = []

@@ -4,7 +4,6 @@ import random
 from threading import Timer
 import copy
 
-import yaml
 from twisted.python import log
 
 from utils import roundrobin, frozendict

@@ -2,8 +2,6 @@ import glob
 import os
 import shutil
 
-import yaml
-
 from twisted.application import internet, service
 from twisted.web import static, server
 from autobahn.resource import WebSocketResource
