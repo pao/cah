@@ -6,7 +6,7 @@ setup(
     packages = find_packages(exclude=['tests']),
     
     install_requires = """
-        PyYAML==3.10
+        ruamel.yaml==0.16.10
         Twisted==20.3.0
         autobahn==0.5.9
         pystache==0.5.3

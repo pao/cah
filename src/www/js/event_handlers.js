@@ -259,12 +259,32 @@ cah.eventHandlers = (function () {
             }
             $(".pane_overlay").html(ich.t_gameconfig(data));
             $(".available-cardset").on("click", function() {
-                cah.emit("set_active_cardset", $(this).attr("id"), $(this).is(":checked"));
+                cah.emit("set_active_cardset", $(this).parent().attr("id"), $(this).is(":checked"));
+            });
+            $(".default-cardset").on("click", function() {
+                var tag = $(this).parent().attr("id");
+                var state = $(this).is(":checked");
+                cah.emit("set_default_cardset", tag, state);
+                if (state) {
+                    cah.emit("set_active_cardset", tag, state);
+                }
+            });
+            $(".refresh-cardset").on("click", function() {
+                cah.emit("add_cardcast_set", $(this).parent().attr("id"));
+            });
+            $(".delete-cardset").on("click", function() {
+                cah.emit("delete_cardset", $(this).parent().attr("id"));
             });
             $(".submit-cardcast").on("click", function() {
-                cah.emit("add_cardcast_set", $(".add-cardcast").val(), $(".make-cardcast-persistent").is(":checked"));
+                cah.emit("add_cardcast_set", $(".add-cardcast").val());
                 $(".add-cardcast").val("");
-                $(".make-cardcast-persistent").prop("checked", false);
+            });
+            $(".hide-cardset").on("click", function() {
+                cah.emit("hide_cardset", $(this).parent().attr("id"), true);
+            });
+            $(".unhide-cardset").on("click", function() {
+                cah.emit("hide_cardset", $(".set-to-unhide").val(), false);
+                $(".set-to-unhide").val("");
             });
             $(".winning-score").on("change", function() {
                 cah.emit("set_winning_score", $(".winning-score").val());
