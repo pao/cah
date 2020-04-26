@@ -7,13 +7,12 @@ from twisted.web import static, server
 from autobahn.resource import WebSocketResource
 
 import pystache
+from configuration import Configuration
 from caewebsockets import CahServerFactory
 
 WEBROOT_DIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), "www")
 
-with open("config.yml") as f:
-    config = yaml.load(f)
-    config['admin_password'] = os.getenv('CAH_ADMIN_PASS', config['admin_password'])
+config = Configuration()
 
 ## Set up the web server
 fileResource = static.File(os.path.join(WEBROOT_DIR))
@@ -29,10 +28,10 @@ with open(os.path.join(WEBROOT_DIR, "js", "init.mustache")) as f:
 fileResource.putChild('js', jsResource)
 
 # Serve up websockets
-serverURI = "ws://{websocket_domain}:{websocket_port}".format(**config)
+serverURI = "ws://{websocket_domain}:{websocket_port}".format(websocket_domain=config.websocket_domain, websocket_port=config.websocket_port)
 cahWampFactory = CahServerFactory(
     serverURI,
-    "{server_domain}:{server_port}".format(**config),
+    "{server_domain}:{server_port}".format(server_domain=config.server_domain, server_port=config.server_port),
     debug=False,
     debugWamp=True,
     debugCodePaths=False,
