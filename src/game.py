@@ -1,11 +1,11 @@
 from itertools import cycle, islice
 import os
 import random
-from threading import Timer
 import copy
 
 import yaml
 from twisted.python import log
+from twisted.internet import reactor
 
 from utils import roundrobin, frozendict
 from cardset import DeckManager
@@ -96,7 +96,7 @@ class Game(object):
         if len([u for u in self.users if not u.afk]) < 3:
             return "Can't start a game with less than 3 users"
         try:
-            self._state.round_timer.cancel()
+            self._cancel_round_timer()
         except:
             pass
         self._state = State(**(self.cardset.get_active_cards()))
@@ -167,7 +167,7 @@ class Game(object):
                 "title": "Next Round",
                 "duration": 10
             })
-            Timer(10, self._start_round, ()).start()
+            reactor.callLater(10, self._start_round)
 
     def sync_me(self):
         self.sync_users()
@@ -194,20 +194,19 @@ class Game(object):
         self._start_round_timer(self.round_length)
 
     def _start_round_timer(self, duration):
-        self._cancel_round_timer()
         self._publish("show_timer", {
             "title": "Round ending in: ",
             "duration": self.round_length
         })
-        self._state.round_timer = Timer(duration,
-            self._force_round_end, ())
-        self._state.round_timer.start()
+        self._state.start_round_timer(duration,
+            self._force_round_end)
+
+    def pause_unpause_round_timer(self):
+        is_paused = self._state.pause_unpause_round_timer
+        self._publish("pause_timer", is_paused)
 
     def _cancel_round_timer(self):
-        try:
-            self._state.round_timer.cancel()
-        except:
-            pass
+        self._state.cancel_round_timer()
         self._publish("cancel_timer")
 
     def _get_round_winner_message(self, black_text, white_cards_text):
@@ -317,7 +316,6 @@ class Game(object):
                     players_outstanding = True
 
             if not players_outstanding:
-                self._cancel_round_timer()
                 cards = []
                 for user in self.users:
                     if user.czar or user.afk:
@@ -331,6 +329,7 @@ class Game(object):
                 random.shuffle(cards)
                 self._publish("begin_judging", {"cards": cards})
                 self.sync_users()
+                log.msg("about to restart timer for judging {}".format(self.round_length))
                 self._start_round_timer(self.round_length)
 
     def _set_step(self, step):
@@ -433,3 +432,28 @@ class State(object):
         log.msg("Black cards: {}, white cards: {}".format(len(self.available_black_cards), len(self.available_white_cards)))
         self.black_card = None
         self.round_timer = None
+        self.round_timer_paused = False
+        self.round_timer_action = None
+        self.round_timer_remaining = 0
+
+    def start_round_timer(self, duration, action):
+        self.round_timer_paused = False
+        self.round_timer_action = action
+        log.msg("starting round timer for {}".format(duration))
+        self.round_timer = reactor.callLater(duration, action)
+
+    def cancel_round_timer(self):
+        if self.round_timer is not None:
+            try:
+                self.round_timer.cancel()
+            except:
+                pass
+
+    def pause_unpause_timer(self):
+        if not self.round_timer_paused:
+            self.round_timer_remaining = self.round_timer.getTime() - reactor.seconds()
+            self.cancel_round_timer()
+        else:
+            self.start_round_timer(self.round_timer_remaining, self.round_timer_action)
+        self.round_timer_paused = not self.round_timer_paused
+        return self.round_timer_paused

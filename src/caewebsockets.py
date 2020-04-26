@@ -136,6 +136,10 @@ class CahWampServerProtocol(WampServerProtocol):
         self._game.hand_size = int(hand_size)
         self._game.sync_setup()
 
+    @exportRpc
+    def pause_unpause_timer(self):
+        self._game.pause_unpause_round_timer()
+
     def onSessionOpen(self):
         self.registerProcedureForRpc("http://{server_domain}:{server_port}/ws/#join_game".format(**config),
             self.join_game)
