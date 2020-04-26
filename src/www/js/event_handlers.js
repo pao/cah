@@ -254,6 +254,9 @@ cah.eventHandlers = (function () {
             append_to_chat(ich.t_chat_msg(data));
         },
         setup:function (topic, data) {
+            if (!cah.username) {
+                return;
+            }
             $(".pane_overlay").html(ich.t_gameconfig(data));
             $(".available-cardset").on("click", function() {
                 cah.emit("set_active_cardset", $(this).attr("id"), $(this).is(":checked"));

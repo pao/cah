@@ -102,6 +102,7 @@ cah.start = function () {
             //Prevent usernames >16 chars on clientside.
             if (username.length < 17) {
                 $(this).attr('disabled', '');
+                cah.username = "_pending_"
                 cah.emit("join", username)
                     .then(function (result) {
                         var $login = $('.login');
