@@ -287,7 +287,8 @@ class Game(object):
         if num_cards >= len(self._state.available_white_cards):
             rest_draw = self._state.available_white_cards
             num_cards -= len(self._state.available_white_cards)
-            self._state.available_white_cards = set(copy.deepcopy(self._white_cards))
+            all_cards = self.cardset.get_active_cards()
+            self._state.available_white_cards = set(frozendict(card) for card in all_cards["white_cards"])
             # Remove cards currently accounted for elsewhere
             self._state.available_white_cards -= rest_draw
             for user in self.users:
